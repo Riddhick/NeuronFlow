@@ -25,6 +25,7 @@ Features include:
 
 - **Linear Models**: 
   - Linear Regression
+  - Multiple Linear Regression
 
 
 
