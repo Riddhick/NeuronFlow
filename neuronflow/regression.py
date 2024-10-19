@@ -9,7 +9,10 @@ class linear:
     def fit(self):
         xTranspose=self.X.T
         X_t_X=np.matmul(xTranspose,self.X)
-        X_inv=np.linalg.inv(X_t_X)
+        if(np.det(X_t_X)==0):
+            X_inv=np.linalg.pinv(X_t_X)
+        else:
+            X_inv=np.linalg.inv(X_t_X)
         temp=np.matmul(X_inv,xTranspose)
         thetas=np.matmul(temp,self.Y)
         self.thetas=thetas
