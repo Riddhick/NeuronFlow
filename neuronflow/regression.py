@@ -59,3 +59,5 @@ class multilinear(linear):
         lower=(diff2**2).sum()
         score=1-(upper/lower)
         return score
+
+

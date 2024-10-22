@@ -36,4 +36,21 @@ Features include:
 ```bash
 pip install neuronflow
 
+```
+# 🧑‍🏫 How To Use
+
+```python
+import neuronflow as nf
+
+#Regression
+from neuronflow import regerssion
+
+#Linear Regression
+X=np.array([1,2,3,4])
+Y=np.array([5,6,7,8])
+model=nf.regression.linear(X,Y)
+model.fit() 
+#Inference 
+value=model.value(np.array([9,10]))
+
 
