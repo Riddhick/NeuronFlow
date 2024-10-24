@@ -37,7 +37,7 @@ Features include:
 pip install neuronflow
 
 ```
-# 🧑‍🏫 How To Use
+#  How To Use
 
 ```python
 import neuronflow as nf
@@ -52,5 +52,5 @@ model=nf.regression.linear(X,Y)
 model.fit() 
 #Inference 
 value=model.value(np.array([9,10]))
-
+```
 

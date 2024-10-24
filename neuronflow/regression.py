@@ -40,7 +40,7 @@ class multilinear(linear):
         ones=np.ones(self.X.shape[0]).reshape(self.X.shape[0],1)
         self.X=np.append(ones,self.X,axis=1)
         self.Y=Y.reshape(Y.shape[0],1)
-        print(self.X)
+        
     def fit(self):
         thetas=super().fit()
         self.thetas=thetas
@@ -60,4 +60,28 @@ class multilinear(linear):
         score=1-(upper/lower)
         return score
 
+
+class polynomial(linear):
+    def __init__(self,X,Y,degree):
+        self.X=X.reshape(X.shape[0],1)
+        ones=np.ones(self.X.shape[0]).reshape(self.X.shape[0],1)
+        self.X=np.append(ones,self.X,axis=1)
+        self.X=np.repeat(self.X,[1,degree],axis=1)
+        self.Y=Y.reshape(Y.shape[0],1)
+        self.X=self.X**np.arange(0,self.X.shape[1])
+       
+    def fit(self):
+        xTranspose=self.X.T
+        X_t_X=np.matmul(xTranspose,self.X)
+        if(np.linalg.det(X_t_X)==0):
+            X_inv=np.linalg.pinv(X_t_X)
+        else:
+            X_inv=np.linalg.inv(X_t_X)
+        temp=np.matmul(X_inv,xTranspose)
+        thetas=np.matmul(temp,self.Y)
+        self.thetas=thetas
+        return self.thetas
+    
+    def values(self,x):
+        pass
 
