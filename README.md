@@ -21,11 +21,18 @@ Features include:
 - 💡 **Explainability**: Model insights for transparency and debugging.
 
 
-# 🌟 Models Available
+# 🌟 Tools Available
 
 - **Linear Models**: 
   - Linear Regression
   - Multiple Linear Regression
+  - Polynomial Regression
+
+- **Evaluation Metrics**:
+  - Mean Square Error(MSE)
+  - Mean Absolute Error(MAE)
+  - Root Mean Square Error(RMSE)
+  - R2 Score
 
 
 
