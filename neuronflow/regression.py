@@ -23,17 +23,8 @@ class linear:
         ones=np.ones(x.shape[0]).reshape(x.shape[0],1)
         x=np.append(ones,x,axis=1)
         values=np.matmul(x,self.thetas)
-        return values.T
+        return values
     
-    def r_square(self,x,y):
-        y=y.reshape(y.shape[0],1).T
-        y_pred=self.value(x)
-        diff=y-y_pred
-        upper=(diff**2).sum()
-        diff2=y-y.mean()
-        lower=(diff2**2).sum()
-        score=1-(upper/lower)
-        return score
 
 
 class multilinear(linear):
@@ -49,20 +40,12 @@ class multilinear(linear):
         return self.thetas
     
     def value(self,x):
+        x=x.T
         ones=np.ones(x.shape[0]).reshape(x.shape[0],1)
         x=np.append(ones,x,axis=1)
         values=np.matmul(x,self.thetas)
-        return values.T
+        return values
     
-    def r_square(self,x,y):
-        y=y.reshape(y.shape[0],1).T
-        y_pred=self.value(x.T)
-        diff=y-y_pred
-        upper=(diff**2).sum()
-        diff2=y-y.mean()
-        lower=(diff2**2).sum()
-        score=1-(upper/lower)
-        return score
 
 
 class polynomial(linear):
@@ -87,9 +70,6 @@ class polynomial(linear):
         x=np.repeat(x,[1,degree],axis=1)
         x=x**np.arange(0,x.shape[1])
         values=np.matmul(x,self.thetas)
-        return values.T
-    
-    def r_square(self, x, y):
-        return super().r_square(x, y)
+        return values
         
 
