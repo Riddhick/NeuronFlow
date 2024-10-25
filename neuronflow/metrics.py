@@ -9,7 +9,7 @@ def mse(y,y_pred):
     return diff_sum/y_pred.shape[0]
 
 def rmse(y,y_pred):
-    mse=mse(y,y_pred)
+    mse_score=mse(y,y_pred)
     return math.sqrt(mse)
 
 def mae(y,y_pred):
