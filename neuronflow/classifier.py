@@ -2,21 +2,22 @@ import numpy as np
 from utility import sigma
 
 class logistic:
-    def __init__(self,X,Y,epoch):
+    def __init__(self,X,Y,max_iter=10000,lr=0.01):
         if(X.ndim==1):
             self.X=X.reshape(X.shape[0],1)
         else: 
             self.X=X.T
         self.Y=Y
-        self.epoch=epoch
+        self.max_iter=max_iter
+        self.lr=lr
         #print(self.X)
         #print(self.Y)
+
     def initialize_weights(self):
         n=self.X.shape[1]
         initial_w=np.zeros(n)
         return initial_w
-    def compute_cost(self,w,b):
-        m,n=self.X.shape
+    
     def gradient_calculate(self,w,b):
         z=np.dot(self.X,w)+b
         f_wb=sigma(z)
@@ -31,24 +32,49 @@ class logistic:
             dj_dw.append(float(temp))
         #print(dj_dw)
         return dj_dw,dj_db
+    
     def gradient_descent(self,w,b):
-        for i in range(self.epoch):
+        threshold=0.0000001
+        db_temp=10000
+        for i in range(self.max_iter):           
             dw,db=self.gradient_calculate(w,b)
+            if(abs(db-db_temp)<threshold):
+               break
             for i in range(len(dw)):
-                dw[i]=dw[i]*0.1
+                dw[i]=dw[i]*self.lr
             w=w-dw
-            b=b-0.1*db
+            b=b-self.lr*db
+            db_temp=db 
+        self.w=w
+        self.b=b
         return w,b
+    
+    def predict(self,x_test):
+        if(x_test.ndim==1):
+            x_test=x_test.reshape(x_test.shape[0],1)
+        else: 
+            x_test=x_test.T
+        x=np.dot(x_test,self.w)+self.b
+        f_wb=sigma(x)
+        for i in range(len(f_wb)):
+            if(f_wb[i]>0.5):
+                f_wb[i]=1
+            else:
+                f_wb[i]=0
+        print(f_wb)
+
     def fit(self):
         init_w=self.initialize_weights()
         init_b=0
         w,b=self.gradient_descent(init_w,init_b)
-        print(w,b)
+        return w,b
 
 
 
 x=np.array([[0.1,1.2,1.5,2.0,1.0,2.5],[1.1,.9,1.5,1.8,2.5,.5]])
 y=np.array([0,0,1,1,1,0])
-model=logistic(x,y,10)
+model=logistic(x,y,lr=0.1)
 #model.initialize_weights()
+
 model.fit()
+model.predict(x)
