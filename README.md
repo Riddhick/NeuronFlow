@@ -53,13 +53,23 @@ import neuronflow as nf
 
 #Regression
 from neuronflow import regerssion
+from neuronflow import classifier
 
 #Linear Regression
 X=np.array([1,2,3,4])
 Y=np.array([5,6,7,8])
-model=nf.regression.linear(X,Y)
-model.fit() 
+linear_model=regression.linear(X,Y)
+linear_model.fit() 
 #Inference 
-value=model.value(np.array([9,10]))
+linera_value=model.value(np.array([9,10]))
+
+#Classification
+x=np.array([[0.1,1.2,1.5,2.0,1.0,2.5],[1.1,.9,1.5,1.8,2.5,.5]])
+y=np.array([0,0,1,1,1,0])
+
+logistic_model=classifier.logistic(x,y,lr=0.1)
+logistic_model.fit()
+
+logistic_model.predict(x)
 ```
 

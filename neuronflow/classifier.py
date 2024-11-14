@@ -12,8 +12,7 @@ class logistic:
         self.lr=lr
         self.activation="sigmoid"
         self.regularization=None
-        #print(self.X)
-        #print(self.Y)
+       
 
     def initialize_weights(self):
         n=self.X.shape[1]
@@ -33,7 +32,6 @@ class logistic:
             temp=temp.sum()
             temp=temp/(len(self.Y))   
             dj_dw.append(float(temp))
-        #print(dj_dw)
         return dj_dw,dj_db
     
     def gradient_descent(self,w,b):
