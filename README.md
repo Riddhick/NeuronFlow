@@ -27,6 +27,8 @@ Features include:
   - Linear Regression
   - Multiple Linear Regression
   - Polynomial Regression
+- **Classifier Models**:
+  - Logistic Regression
 
 - **Evaluation Metrics**:
   - Mean Square Error(MSE)

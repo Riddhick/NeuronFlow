@@ -2,7 +2,7 @@ import numpy as np
 from utility import sigma
 
 class logistic:
-    def __init__(self,X,Y,max_iter=10000,lr=0.01):
+    def __init__(self,X,Y,max_iter=10000,lr=0.01,activation="sigmoid",regularization=None):
         if(X.ndim==1):
             self.X=X.reshape(X.shape[0],1)
         else: 
@@ -10,6 +10,8 @@ class logistic:
         self.Y=Y
         self.max_iter=max_iter
         self.lr=lr
+        self.activation="sigmoid"
+        self.regularization=None
         #print(self.X)
         #print(self.Y)
 
@@ -20,7 +22,8 @@ class logistic:
     
     def gradient_calculate(self,w,b):
         z=np.dot(self.X,w)+b
-        f_wb=sigma(z)
+        if(self.activation=="sigmoid"):
+            f_wb=sigma(z)
         j_wb=f_wb-self.Y
         dj_db=j_wb.sum()
         dj_db=dj_db/(len(self.Y))
@@ -55,7 +58,8 @@ class logistic:
         else: 
             x_test=x_test.T
         x=np.dot(x_test,self.w)+self.b
-        f_wb=sigma(x)
+        if(self.activation=="sigmoid"):
+            f_wb=sigma(x)
         for i in range(len(f_wb)):
             if(f_wb[i]>0.5):
                 f_wb[i]=1
@@ -71,10 +75,3 @@ class logistic:
 
 
 
-x=np.array([[0.1,1.2,1.5,2.0,1.0,2.5],[1.1,.9,1.5,1.8,2.5,.5]])
-y=np.array([0,0,1,1,1,0])
-model=logistic(x,y,lr=0.1)
-#model.initialize_weights()
-
-model.fit()
-model.predict(x)
