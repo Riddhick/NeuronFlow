@@ -2,7 +2,7 @@ import numpy as np
 from utility import sigma
 
 class logistic:
-    def __init__(self,X,Y,max_iter=10000,lr=0.01,activation="sigmoid",regularization=None):
+    def __init__(self,X,Y,max_iter=100000,lr=0.01,activation="sigmoid",regularization=None,method="BGD",lambda1=1,lambda2=1):
         if(X.ndim==1):
             self.X=X.reshape(X.shape[0],1)
         else: 
@@ -10,8 +10,13 @@ class logistic:
         self.Y=Y
         self.max_iter=max_iter
         self.lr=lr
-        self.activation="sigmoid"
-        self.regularization=None
+        self.activation=activation
+        self.regularization=regularization
+        if(self.regularization=="elastic"):
+            lambda1=0.5
+            lambda2=0.5
+        self.lambda1=lambda1
+        self.lambda2=lambda2
        
 
     def initialize_weights(self):
@@ -21,6 +26,13 @@ class logistic:
     
     def gradient_calculate(self,w,b):
         z=np.dot(self.X,w)+b
+        lambda_val=[0,0]
+        if(self.regularization=="l2"):
+            lambda_val[1]=self.lambda2
+        elif(self.regularization=="l1"):
+            lambda_val[0]=self.lambda1
+        elif(self.regularization=="elastic"):
+            lambda_val=[self.lambda1,self.lambda2]
         if(self.activation=="sigmoid"):
             f_wb=sigma(z)
         j_wb=f_wb-self.Y
@@ -30,7 +42,7 @@ class logistic:
         for i in range(len(w)):
             temp=j_wb*self.X[:,i]
             temp=temp.sum()
-            temp=temp/(len(self.Y))   
+            temp=temp/(len(self.Y)) + (lambda_val[0]/(2*len(self.Y)))+ (lambda_val[1]*w[i])/len(self.Y)  #changed 
             dj_dw.append(float(temp))
         return dj_dw,dj_db
     
