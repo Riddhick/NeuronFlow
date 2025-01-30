@@ -1,12 +1,36 @@
 import numpy as np
 
 class linear:
-    def __init__(self,X,Y):
+    def __init__(self,X,Y,max_iter=1000,lr=0.01):
         self.X=X.reshape(X.shape[0],1)
         self.Y=Y.reshape(Y.shape[0],1)
-        ones=np.ones(X.shape[0]).reshape(X.shape[0],1)
-        self.X=np.append(ones,self.X,axis=1)
+        self.max_iter=max_iter
+        self.lr=lr
+
+    def fit_gradient(self):
+        print(self.X)
+        init_w=0
+        init_b=0
+        #dw,db=self.gradient_descent(init_w,init_b)
+        threshold=0.000001
+        for i in range(100000):
+            dw,db=self.gradient_descent(init_w,init_b)
+            init_w=init_w-self.lr*dw
+            init_b=init_b-self.lr*db
+        print(init_b,init_w)
+
+    def gradient_descent(self,w,b):
+        #threshold=0.000001
+        z=np.dot(self.X,w)+b
+        error=z-self.Y
+        dw=error*self.X
+        dw=np.sum(dw)/self.X.shape[0]
+        db=np.sum(error)/self.X.shape[0]
+        return dw,db
+    
     def fit(self):
+        ones=np.ones(self.X.shape[0]).reshape(self.X.shape[0],1)
+        self.X=np.append(ones,self.X,axis=1)
         xTranspose=self.X.T
         X_t_X=np.matmul(xTranspose,self.X)
         if(np.linalg.det(X_t_X)==0):
@@ -30,8 +54,8 @@ class linear:
 class multilinear(linear):
     def __init__(self,X,Y):
         self.X=X.T
-        ones=np.ones(self.X.shape[0]).reshape(self.X.shape[0],1)
-        self.X=np.append(ones,self.X,axis=1)
+        #ones=np.ones(self.X.shape[0]).reshape(self.X.shape[0],1)
+        #self.X=np.append(ones,self.X,axis=1)
         self.Y=Y.reshape(Y.shape[0],1)
         
     def fit(self):
@@ -47,7 +71,7 @@ class multilinear(linear):
         return values
     
 
-
+## have to change the fit
 class polynomial(linear):
     def __init__(self,X,Y,degree):
         self.X=X.reshape(X.shape[0],1)
@@ -73,3 +97,8 @@ class polynomial(linear):
         return values
         
 
+#test case 
+x=np.array([1,2,3,4,5])
+y=np.array([6,8,10,12,14])
+model=linear(x,y)
+model.fit_gradient()
