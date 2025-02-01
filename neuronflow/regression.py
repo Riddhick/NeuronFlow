@@ -1,104 +1,56 @@
 import numpy as np
 
 class linear:
-    def __init__(self,X,Y,max_iter=1000,lr=0.01):
-        self.X=X.reshape(X.shape[0],1)
-        self.Y=Y.reshape(Y.shape[0],1)
-        self.max_iter=max_iter
-        self.lr=lr
-
-    def fit_gradient(self):
-        print(self.X)
-        init_w=0
-        init_b=0
-        #dw,db=self.gradient_descent(init_w,init_b)
-        threshold=0.000001
-        for i in range(100000):
-            dw,db=self.gradient_descent(init_w,init_b)
-            init_w=init_w-self.lr*dw
-            init_b=init_b-self.lr*db
-        print(init_b,init_w)
-
-    def gradient_descent(self,w,b):
-        #threshold=0.000001
-        z=np.dot(self.X,w)+b
-        error=z-self.Y
-        dw=error*self.X
-        dw=np.sum(dw)/self.X.shape[0]
-        db=np.sum(error)/self.X.shape[0]
-        return dw,db
-    
-    def fit(self):
-        ones=np.ones(self.X.shape[0]).reshape(self.X.shape[0],1)
-        self.X=np.append(ones,self.X,axis=1)
-        xTranspose=self.X.T
-        X_t_X=np.matmul(xTranspose,self.X)
-        if(np.linalg.det(X_t_X)==0):
-            X_inv=np.linalg.pinv(X_t_X)
+    def __init__(self,X,Y,max_itr=100000,lr=0.01):
+        if(X.ndim==1):
+            self.X=X.reshape(X.shape[0],1)
         else:
-            X_inv=np.linalg.inv(X_t_X)
-        temp=np.matmul(X_inv,xTranspose)
-        thetas=np.matmul(temp,self.Y)
-        self.thetas=thetas
-        return self.thetas
-    
-    def value(self,x):
-        x=x.reshape(x.shape[0],1)
-        ones=np.ones(x.shape[0]).reshape(x.shape[0],1)
-        x=np.append(ones,x,axis=1)
-        values=np.matmul(x,self.thetas)
-        return values
-    
-
-
-class multilinear(linear):
-    def __init__(self,X,Y):
-        self.X=X.T
-        #ones=np.ones(self.X.shape[0]).reshape(self.X.shape[0],1)
-        #self.X=np.append(ones,self.X,axis=1)
-        self.Y=Y.reshape(Y.shape[0],1)
-        
+            self.X=X.T
+        self.Y=Y
+        self.max_itr=max_itr
+        self.lr=lr
+    def initialize_weights(self):
+        n=self.X.shape[1]
+        initial_w=np.zeros(n)
+        return initial_w
+    def gradient_calc(self,w,b):
+        f_wb=np.dot(self.X,w)+b
+        j_wb=f_wb-self.Y
+        lambda_val=[0,0]
+        dj_db=j_wb.sum()
+        dj_db=dj_db/(len(self.Y))
+        dj_dw=[]
+        for i in range(len(w)):
+            temp=j_wb*self.X[:,i]
+            temp=temp.sum()
+            temp=temp/(len(self.Y)) + (lambda_val[0]/(2*len(self.Y)))+ (lambda_val[1]*w[i])/len(self.Y)  #changed 
+            dj_dw.append(float(temp))
+        return dj_dw,dj_db
+    def gradient_descent(self,w,b):
+        threshold=0.000000000001
+        db_temp=10000
+        for i in range(self.max_itr):
+            dw,db=self.gradient_calc(w,b)
+            #print(dw)
+            if(abs(db-db_temp)<threshold):
+                break
+            for i in range(len(dw)):
+                dw[i]=dw[i]*self.lr
+            w=w-dw
+            b=b-self.lr*db
+            db_temp=db
+        self.w=w
+        self.b=b
+        return w,b
     def fit(self):
-        thetas=super().fit()
-        self.thetas=thetas
-        return self.thetas
-    
-    def value(self,x):
-        x=x.T
-        ones=np.ones(x.shape[0]).reshape(x.shape[0],1)
-        x=np.append(ones,x,axis=1)
-        values=np.matmul(x,self.thetas)
-        return values
-    
+        init_w=self.initialize_weights()
+        init_b=0
+        w,b=self.gradient_descent(init_w,init_b)
+        return w,b
+    def predict(self,x):
+        pass
 
-## have to change the fit
-class polynomial(linear):
-    def __init__(self,X,Y,degree):
-        self.X=X.reshape(X.shape[0],1)
-        ones=np.ones(self.X.shape[0]).reshape(self.X.shape[0],1)
-        self.X=np.append(ones,self.X,axis=1)
-        self.X=np.repeat(self.X,[1,degree],axis=1)
-        self.Y=Y.reshape(Y.shape[0],1)
-        self.X=self.X**np.arange(0,self.X.shape[1])
-       
-    def fit(self):
-        thetas=super().fit()
-        self.thetas=thetas
-        return self.thetas
-    
-    def value(self,x):
-        degree=self.thetas.shape[0]-1
-        x=x.reshape(x.shape[0],1)
-        ones=np.ones(x.shape[0]).reshape(x.shape[0],1)
-        x=np.append(ones,x,axis=1)
-        x=np.repeat(x,[1,degree],axis=1)
-        x=x**np.arange(0,x.shape[1])
-        values=np.matmul(x,self.thetas)
-        return values
-        
 
-#test case 
-x=np.array([1,2,3,4,5])
-y=np.array([6,8,10,12,14])
-model=linear(x,y)
-model.fit_gradient()
+model=linear(np.array([1,2,3,4]),np.array([2,4,6,8]))
+vals=model.fit()
+print(vals)

@@ -82,6 +82,3 @@ class logistic:
         init_b=0
         w,b=self.gradient_descent(init_w,init_b)
         return w,b
-
-
-
