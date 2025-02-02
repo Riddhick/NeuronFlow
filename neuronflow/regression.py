@@ -1,7 +1,7 @@
 import numpy as np
 
 class linear:
-    def __init__(self,X,Y,max_itr=100000,lr=0.01):
+    def __init__(self,X,Y,max_itr=100000,lr=0.01,regularization=None,lambda1=1,lambda2=1):
         if(X.ndim==1):
             self.X=X.reshape(X.shape[0],1)
         else:
@@ -9,14 +9,28 @@ class linear:
         self.Y=Y
         self.max_itr=max_itr
         self.lr=lr
+        self.regularization=regularization
+        if(self.regularization=="elastic"):
+            lambda1=0.5
+            lambda2=0.5
+        self.lambda1=lambda1
+        self.lambda2=lambda2
+
     def initialize_weights(self):
         n=self.X.shape[1]
         initial_w=np.zeros(n)
         return initial_w
+    
     def gradient_calc(self,w,b):
         f_wb=np.dot(self.X,w)+b
         j_wb=f_wb-self.Y
         lambda_val=[0,0]
+        if(self.regularization=="l2"):
+            lambda_val[1]=self.lambda2
+        elif(self.regularization=="l1"):
+            lambda_val[0]=self.lambda1
+        elif(self.regularization=="elastic"):
+            lambda_val=[self.lambda1,self.lambda2]
         dj_db=j_wb.sum()
         dj_db=dj_db/(len(self.Y))
         dj_dw=[]
@@ -47,10 +61,10 @@ class linear:
         init_b=0
         w,b=self.gradient_descent(init_w,init_b)
         return w,b
-    def predict(self,x):
-        pass
-
-
-model=linear(np.array([1,2,3,4]),np.array([2,4,6,8]))
-vals=model.fit()
-print(vals)
+    def predict(self,x_test):
+        if(x_test.ndim==1):
+            x_test=x_test.reshape(x_test.shape[0],1)
+        else: 
+            x_test=x_test.T
+        x=np.dot(x_test,self.w)+self.b
+        return(x)
